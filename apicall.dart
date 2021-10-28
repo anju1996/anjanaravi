@@ -1,39 +1,55 @@
 import "dart:io";
+import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-//cTo is converted to currency
-//cFrom is converted from currency
+Future<double> fetchConverter(
+    String source, String destination, double value) async {
+  http.Response response = await http.get((Uri.parse(
+      'https://v6.exchangerate-api.com/v6/bb5e35fabdf312c7b8e67e8f/pair/${source.toUpperCase()}/${destination.toUpperCase()}/$value')));
 
-Future<void> fetchConverter(String cFrom, String cTo, double value) async {
-  var response = await http.get((Uri.parse(
-      'https://v6.exchangerate-api.com/v6/bb5e35fabdf312c7b8e67e8f/pair/${cFrom.toUpperCase()}/${cTo.toUpperCase()}/$value')));
-
-  print(response.body);
+  // print(response.body);
+  if (response.statusCode == 200) {
+    var list = jsonDecode(response.body);
+    var result = list['conversion_result'];
+    // print("The conversion result is $result ${destination.toUpperCase()}");
+    return result;
+  } else {
+    throw Exception('Unable to load');
+  }
 }
 
 void main() async {
   print("Select the first currency:");
-  String? cFrom = stdin.readLineSync();
 
-  if (cFrom == null || cFrom.isEmpty) {
+  String? source = stdin.readLineSync();
+
+  if (source == null || source.isEmpty) {
     throw Exception("Enter a valid value");
   }
 
   print("Select the second currency:");
-  String? cTo = stdin.readLineSync();
 
-  if (cTo == null || cTo.isEmpty) {
+  String? destination = stdin.readLineSync();
+
+  if (destination == null || destination.isEmpty) {
     throw Exception("Enter a valid value");
   }
 
   print("Enter the amount");
+
   var amount = stdin.readLineSync();
 
   if (amount == null || amount.isEmpty) {
     throw Exception("enter a valid input");
   }
 
-  double? value = double?.parse(amount);
+  double? value = double?.tryParse(amount);
+  if (value == null) {
+    throw Exception("Enter a valid input");
+  }
 
-  final newAmount = await fetchConverter(cFrom, cTo, value);
+  final newAmount = await fetchConverter(source, destination, value);
+  print(
+      "$value ${source.toUpperCase()} is converted to $newAmount ${destination.toUpperCase()}");
 }
