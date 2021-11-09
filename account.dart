@@ -7,5 +7,5 @@ class Account {
   bool? status;
   List<Transaction> transactions = [];
 
-  Account({this.accountNumber, this.name, this.status});
+ 
 }
