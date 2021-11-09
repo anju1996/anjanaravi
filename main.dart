@@ -1,38 +1,50 @@
 import "dart:io";
 
-import "demo.dart";
+import "demo1.dart";
 import "account.dart";
 import 'transaction.dart';
 
 void main() {
-  bool? status;
-
   Bank bank = Bank();
-  Account account = Account();
+  // Account account = Account();
 
-  status = true;
+  // account.status = true;
   bool user = true;
   while (user) {
     print(
-        "1. Create \n 2. credit \n 3. Debit \n 4. View and Edit  \n 5. Close the account \n 6. Exit ");
+        "1. Create \n 2. View an existing account \n 3. Close your account \n 4. Exit");
     print("please select any option");
-    final input = stdin.readLineSync();
-    if (input == null || input.isEmpty) {
+    final mainInput = stdin.readLineSync();
+    if (mainInput == null || mainInput.isEmpty) {
       throw Exception("invalid");
     }
-    int? option = int?.parse(input);
-
-    if (option == 1) {
+    int? mainOption = int?.parse(mainInput);
+    if (mainOption == 1) {
       bank.openAccount();
-    } else if (option == 2) {
-      bank.credit();
-    } else if (option == 3) {
-      bank.debit();
-    } else if (option == 4) {
+    } else if (mainOption == 2) {
       bank.viewAccount();
-    } else if (option == 5) {
+      print("1. credit \n 2. Debit  \n 3. Transaction History \n 4. Exit");
+      print("please select any option");
+      final input = stdin.readLineSync();
+      if (input == null || input.isEmpty) {
+        throw Exception("invalid");
+      }
+      int? option = int?.parse(input);
+      if (option == 1) {
+        bank.credit();
+      } else if (option == 2) {
+        bank.debit();
+      } else if (option == 3) {
+        bank.viewTransactionHistory();
+      } else if (option == 4) {
+        print("Exit");
+        break;
+      } else {
+        print("invalid option");
+      }
+    } else if (mainOption == 3) {
       bank.closeAccount();
-    } else if (option == 6) {
+    } else if (mainOption == 4) {
       print("Exit");
       break;
     } else {
